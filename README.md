@@ -1,75 +1,56 @@
-# React + TypeScript + Vite
+# Learn React with Me
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive, scroll-driven tutorial that teaches the five core rules of React through mini-games set inside an animated 3D space-station scene.
 
-Currently, two official plugins are available:
+## What it covers
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Each level introduces one React concept, paired with a small playable game so the idea sticks:
 
-## React Compiler
+1. **Components** — composing UI from reusable building blocks
+2. **Props** — passing read-only data from parent to child
+3. **State** — data a component owns and updates via a setter
+4. **Effects & cleanup** — `useEffect` for side effects, and how to undo them
+5. **Rules of Hooks** — why hooks must live at the top level of a component
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The journey ends with a finale section that ties the five rules together.
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** + **TypeScript** + **Vite**
+- **React Three Fiber** / **drei** / **postprocessing** — 3D scene, companion robot, and station layout
+- **Motion** (Framer Motion successor) — scroll-linked animations and UI transitions
+- **styled-components** — component-scoped styling
+- **ESLint** — linting
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# install dependencies
+pnpm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# run the dev server
+pnpm dev
 
+# type-check and build for production
+pnpm build
+
+# preview the production build
+pnpm preview
+
+# lint
+pnpm lint
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Then open the URL Vite prints (usually `http://localhost:5173`) and scroll.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```
+src/
+  sections/       one folder per level (config, component, styles)
+  three/          3D scene, companion robot, station layout
+  ui/             shared UI pieces (progress rail, level wrapper, code block)
+  hooks/          custom hooks (e.g. useScrollProgress)
+  App.tsx         composes the levels and the 3D scene
+public/models/    glTF assets for the 3D scene
 ```
