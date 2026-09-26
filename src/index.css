@@ -39,6 +39,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
+  overflow-x: clip;
   background:
     radial-gradient(1200px 800px at 15% -10%, rgba(97, 218, 251, 0.12), transparent 60%),
     radial-gradient(1000px 700px at 100% 30%, rgba(192, 132, 252, 0.12), transparent 60%),

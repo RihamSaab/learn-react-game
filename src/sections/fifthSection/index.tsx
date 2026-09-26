@@ -21,6 +21,14 @@ export function FifthSection() {
     setCalls((prev) => prev.map((c) => (c.id === id ? { ...c, slot } : c)))
   }
 
+  const toggle = (id: string) => {
+    setCalls((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, slot: c.slot === 'top' ? 'inside-if' : 'top' } : c,
+      ),
+    )
+  }
+
   const insideIf = calls.some((c) => c.slot === 'inside-if')
   const allTop = calls.every((c) => c.slot === 'top')
 
@@ -33,8 +41,8 @@ export function FifthSection() {
           <div className="panel">
             <h3>Rules of Hooks: only at the top</h3>
             <p className="dim">
-              Drag a hook into the <code>if</code> block. React needs the same hooks called in the same
-              order every render.
+              Drag a hook into the <code>if</code> block — or tap it to move. React needs the same
+              hooks called in the same order every render.
             </p>
 
             <HookEditor>
@@ -56,6 +64,7 @@ export function FifthSection() {
                       draggable
                       onDragStart={() => setDragId(c.id)}
                       onDragEnd={() => setDragId(null)}
+                      onClick={() => toggle(c.id)}
                     >
                       {c.label}
                     </HookChip>
@@ -83,6 +92,7 @@ export function FifthSection() {
                       draggable
                       onDragStart={() => setDragId(c.id)}
                       onDragEnd={() => setDragId(null)}
+                      onClick={() => toggle(c.id)}
                     >
                       {c.label}
                     </HookChip>

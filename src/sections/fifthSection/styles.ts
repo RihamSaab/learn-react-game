@@ -72,8 +72,10 @@ export const HookChip = styled(motion.div)<{ $kind: SlotKind }>`
   font-family: var(--mono);
   cursor: grab;
   user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 
-  &:active { cursor: grabbing; }
+  &:active { cursor: grabbing; transform: scale(0.97); }
 
   ${({ $kind }) =>
     $kind === 'top'
