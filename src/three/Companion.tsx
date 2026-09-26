@@ -66,7 +66,7 @@ function Robot({
   scroll,
   pulse,
   rigRef,
-}: Props & { rigRef: RefObject<Group> }) {
+}: Props & { rigRef: RefObject<Group | null> }) {
   const gltf = useGLTF(ROBOT_URL)
   // SkeletonUtils.clone gives us an independent SkinnedMesh + skeleton — a
   // plain Object3D.clone() would share references, and parent-group

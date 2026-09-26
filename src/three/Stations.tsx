@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, type ReactElement } from 'react'
 import * as THREE from 'three'
 import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
 import type { ScrollRef } from '../hooks/useScrollProgress'
@@ -369,7 +369,7 @@ export function Stack({ color }: ShapeProps) {
   )
 }
 
-export const SHAPES: Record<StationKind, (p: ShapeProps) => JSX.Element> = {
+export const SHAPES: Record<StationKind, (p: ShapeProps) => ReactElement> = {
   blocks: Blocks,
   flow: Flow,
   core: Core,
