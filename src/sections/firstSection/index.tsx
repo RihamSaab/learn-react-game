@@ -15,10 +15,12 @@ import {
   Preview,
   PreviewEmpty,
   PreviewPiece,
+  TargetButtonMock,
+  TargetCardMock,
+  TargetHeaderMock,
   TargetHint,
   TargetLabel,
   TargetMock,
-  TargetSlot,
   TinyLine,
 } from './styles'
 
@@ -66,12 +68,12 @@ export function FirstSection() {
             <TargetHint aria-label="Target composition">
               <TargetLabel>🎯 Target</TargetLabel>
               <TargetMock>
-                <TargetSlot aria-hidden>▬▬▬▬▬▬▬</TargetSlot>
-                <TargetSlot aria-hidden>▢ ▢ ▢</TargetSlot>
-                <TargetSlot aria-hidden>⬤ click me</TargetSlot>
+                <TargetHeaderMock aria-hidden>My App</TargetHeaderMock>
+                <TargetCardMock aria-hidden>A card of content.</TargetCardMock>
+                <TargetButtonMock aria-hidden>Click me</TargetButtonMock>
               </TargetMock>
               <TinyLine>
-                Match the target shape. Order matters, so pick the right piece for each slot.
+                A title bar on top, a card in the middle, a button at the bottom. Order matters!
               </TinyLine>
             </TargetHint>
           </div>

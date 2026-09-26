@@ -50,7 +50,7 @@ function App() {
           >
             React powers a huge share of the modern web, and it only has a
             handful of rules. We'll fly through five little space stations,
-            one per rule, and you'll play a small game at each one.
+            one per rule, and at each one, we'll play a quick game together to make it stick.
           </motion.p>
 
           <motion.a
@@ -115,8 +115,8 @@ function App() {
           theme="core"
           subtitle={
             <>
-              State is data a component owns. Update it with the setter and React re-renders.
-              Mutating it directly does nothing.
+              State is data a component owns. Always update it with the setter. That's what
+              tells React to refresh the screen.
             </>
           }
         >

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { AnimatePresence } from 'motion/react'
+import emailjs from '@emailjs/browser'
 import {
   FinaleWrap,
   FormActions,
@@ -10,16 +11,35 @@ import {
   Title,
 } from './styles'
 
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+
+type Status = 'idle' | 'sending' | 'sent' | 'error'
+
 export function FinaleSection() {
   const [message, setMessage] = useState('')
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState<Status>('idle')
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!message.trim()) return
-    setSent(true)
-    setMessage('')
-    setTimeout(() => setSent(false), 4000)
+    if (!message.trim() || status === 'sending') return
+
+    setStatus('sending')
+    try {
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        { message },
+        { publicKey: PUBLIC_KEY },
+      )
+      setStatus('sent')
+      setMessage('')
+      setTimeout(() => setStatus('idle'), 4000)
+    } catch {
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 4000)
+    }
   }
 
   return (
@@ -39,13 +59,18 @@ export function FinaleSection() {
           placeholder="Your message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          disabled={status === 'sending'}
         />
         <FormActions>
-          <button type="submit" className="primary" disabled={!message.trim()}>
-            Send
+          <button
+            type="submit"
+            className="primary"
+            disabled={!message.trim() || status === 'sending'}
+          >
+            {status === 'sending' ? 'Sending...' : 'Send'}
           </button>
           <AnimatePresence>
-            {sent && (
+            {status === 'sent' && (
               <ThanksNote
                 key="thanks"
                 initial={{ opacity: 0, x: -6 }}
@@ -53,6 +78,17 @@ export function FinaleSection() {
                 exit={{ opacity: 0 }}
               >
                 Thanks, got it.
+              </ThanksNote>
+            )}
+            {status === 'error' && (
+              <ThanksNote
+                key="error"
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                style={{ color: 'var(--danger)' }}
+              >
+                Couldn't send. Try again.
               </ThanksNote>
             )}
           </AnimatePresence>

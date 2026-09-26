@@ -39,8 +39,8 @@ export const Textarea = styled.textarea`
   color: var(--text);
   font-family: var(--sans);
   font-size: 0.92rem;
-  min-height: 100px;
-  resize: vertical;
+  height: 120px;
+  resize: none;
 
   &::placeholder { color: var(--text-dim); }
   &:focus {

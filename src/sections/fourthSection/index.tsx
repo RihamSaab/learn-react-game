@@ -2,63 +2,40 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { CodeBlock } from '../../ui/CodeBlock'
 import { BehindScenes } from '../../ui/BehindScenes'
-import { codeFor, LOG_MAX, TICK_MS, type LogEntry } from './config'
+import { codeSample, fakeFetchTip } from './config'
 import {
+  ButtonRow,
   Goal,
   GoalChip,
   GoalLabel,
-  Log,
-  LogLine,
-  LogTag,
-  Switch,
-  ToggleRow,
+  Spinner,
+  SpinnerWrap,
+  TipCard,
+  TipLabel,
+  TipQuote,
 } from './styles'
 
-let idSeq = 0
-
-function Subscriber({
-  cleanup,
-  onLog,
-}: {
-  cleanup: boolean
-  onLog: (e: Omit<LogEntry, 'id'>) => void
-}) {
-  useEffect(() => {
-    onLog({ kind: 'sub', text: 'subscribed to server' })
-    const t = setInterval(() => {
-      onLog({ kind: 'tick', text: 'tick received' })
-    }, TICK_MS)
-
-    if (cleanup) {
-      return () => {
-        clearInterval(t)
-        onLog({ kind: 'clean', text: 'cleanup ran, unsubscribed' })
-      }
-    }
-    return () => {
-      onLog({ kind: 'warn', text: 'component unmounted WITHOUT cleanup, interval leaks!' })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  return null
-}
-
 export function FourthSection() {
-  const [mounted, setMounted] = useState(false)
-  const [cleanup, setCleanup] = useState(true)
-  const [log, setLog] = useState<LogEntry[]>([])
+  const [tip, setTip] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  const push = (e: Omit<LogEntry, 'id'>) =>
-    setLog((prev) => [...prev.slice(-(LOG_MAX - 1)), { ...e, id: ++idSeq }])
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    fakeFetchTip().then((t) => {
+      if (cancelled) return
+      setTip(t)
+      setLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [refreshKey])
 
-  const reset = () => {
-    setLog([])
-    setMounted(false)
-  }
+  const solved = tip !== null && !loading
 
-  /** The player wins by producing a real cleanup event in the log, which only
-   *  happens if they had cleanup ON, mounted, then unmounted. */
-  const solved = log.some((e) => e.kind === 'clean')
+  const getAnother = () => setRefreshKey((k) => k + 1)
 
   const goToNextSection = () => {
     document.getElementById('level-5')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -71,36 +48,23 @@ export function FourthSection() {
           <div className="panel">
             <Goal>
               <GoalLabel>🎯 Goal</GoalLabel>
-              <span>Complete a full cycle: get a</span>
-              <GoalChip>clean</GoalChip>
-              <span>entry in the log.</span>
+              <span>useEffect is where</span>
+              <GoalChip>data fetching</GoalChip>
+              <span>happens. Watch it load a tip.</span>
             </Goal>
             <p className="dim">
-              Toggle cleanup, mount the subscriber, then unmount it. With cleanup on, unmount
-              stops the interval. Without cleanup, the interval leaks.
+              When this section mounts, useEffect kicks off an async fetch. React shows
+              a loading state, then re-renders with the result once the promise resolves.
+              Click "Get another" to re-run the effect through its dependency.
             </p>
 
-            <ToggleRow>
-              <Switch>
-                <input
-                  type="checkbox"
-                  checked={cleanup}
-                  onChange={(e) => setCleanup(e.target.checked)}
-                />
-                <span>Return cleanup function</span>
-              </Switch>
+            <CodeBlock label="useEffect with dependency">{codeSample}</CodeBlock>
 
-              <button
-                className={mounted ? 'danger' : 'primary'}
-                onClick={() => setMounted((m) => !m)}
-              >
-                {mounted ? 'Unmount' : 'Mount'} &lt;Subscriber /&gt;
+            <ButtonRow>
+              <button className="primary" onClick={getAnother} disabled={loading}>
+                {loading ? 'Fetching...' : 'Get another tip'}
               </button>
-
-              <button onClick={reset}>Reset log</button>
-            </ToggleRow>
-
-            <CodeBlock label="useEffect">{codeFor(cleanup)}</CodeBlock>
+            </ButtonRow>
 
             {solved && (
               <motion.div
@@ -108,9 +72,10 @@ export function FourthSection() {
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <strong>✓ Clean cycle complete</strong>
+                <strong>✓ Tip loaded via useEffect</strong>
                 <div>
-                  The cleanup function stopped the interval. That's how effects don't leak.
+                  That's the everyday pattern: mount, effect fetches, state updates, React
+                  re-renders with the data.
                 </div>
                 <div className="actions">
                   <button className="primary" onClick={goToNextSection}>
@@ -122,26 +87,33 @@ export function FourthSection() {
           </div>
 
           <div className="panel">
-            <h3>Event log</h3>
-            <Log>
-              <AnimatePresence initial={false}>
-                {log.map((e) => (
-                  <LogLine
-                    key={e.id}
-                    layout
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
+            <h3>React tip</h3>
+            <TipCard>
+              <TipLabel>Random tip</TipLabel>
+              <AnimatePresence mode="wait">
+                {loading || !tip ? (
+                  <SpinnerWrap
+                    key="loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    $kind={e.kind}
                   >
-                    <LogTag>{e.kind}</LogTag>
-                    {e.text}
-                  </LogLine>
-                ))}
+                    <Spinner />
+                    <span>Fetching a tip...</span>
+                  </SpinnerWrap>
+                ) : (
+                  <TipQuote
+                    key={tip}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    "{tip}"
+                  </TipQuote>
+                )}
               </AnimatePresence>
-              {log.length === 0 && <p className="dim">Mount the subscriber to begin.</p>}
-            </Log>
-            {mounted && <Subscriber cleanup={cleanup} onLog={push} />}
+            </TipCard>
           </div>
         </div>
       </div>
@@ -149,37 +121,36 @@ export function FourthSection() {
       <BehindScenes
         analogy={
           <>
-            Think of an effect like <strong>turning on a tap</strong>. When you're done
-            washing, you have to turn it off. Otherwise water keeps flowing. Cleanup is
-            the "turn off the tap" step.
+            Think of useEffect like <strong>sending a letter through a slow window</strong>.
+            React shows the UI first, then walks over to the window, sends the request, and
+            updates the UI once the response comes back.
           </>
         }
         steps={[
           {
-            label: 'React renders your component',
+            label: 'React renders first, without waiting',
             text: (
               <>
-                First, React runs your function and shows the UI. It hasn't run your
-                effect yet.
+                The UI paints immediately with whatever state you have, usually a loading
+                placeholder. React doesn't block on async work.
               </>
             ),
           },
           {
-            label: 'After the screen updates, the effect runs',
+            label: 'After paint, the effect runs',
             text: (
               <>
-                This is the safe place to do things outside React: start a timer, fetch
-                data, subscribe to something, listen for events.
+                Your fetch, subscription, or timer kicks off. When the response arrives,
+                you update state and React re-renders with the fresh data.
               </>
             ),
           },
           {
-            label: 'When the component leaves, cleanup runs',
+            label: 'The dependency array controls when it re-runs',
             text: (
               <>
-                The function you <em>return</em> from useEffect is React's way of saying
-                "here's how to undo what I just started." Skip it and you leak: old timers,
-                stale listeners, and hard-to-find bugs.
+                <code>[]</code> means run once on mount. <code>[value]</code> means re-run
+                whenever <code>value</code> changes, like a refresh trigger.
               </>
             ),
           },

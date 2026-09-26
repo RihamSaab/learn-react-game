@@ -118,20 +118,41 @@ export const TargetLabel = styled.span`
 export const TargetMock = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding: 10px;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.25);
 `
 
-export const TargetSlot = styled.div`
-  padding: 8px 10px;
+export const TargetHeaderMock = styled.div`
+  padding: 10px 12px;
+  border-radius: 6px 6px 2px 2px;
+  background: rgba(97, 218, 251, 0.14);
+  border-bottom: 2px solid rgba(97, 218, 251, 0.45);
+  color: var(--text-h);
+  font-weight: 600;
+  font-size: 13px;
+`
+
+export const TargetCardMock = styled.div`
+  padding: 14px 12px;
   border-radius: 6px;
-  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
   color: var(--text-dim);
   font-family: var(--mono);
   font-size: 12px;
-  letter-spacing: 0.06em;
+`
+
+export const TargetButtonMock = styled.div`
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(124, 249, 194, 0.14);
+  border: 1px solid rgba(124, 249, 194, 0.4);
+  color: var(--text-h);
+  font-size: 12px;
+  font-weight: 600;
 `
 
 export const TinyLine = styled.p`

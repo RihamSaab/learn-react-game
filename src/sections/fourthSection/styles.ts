@@ -1,6 +1,5 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { motion } from 'motion/react'
-import type { LogKind } from './config'
 
 export const Goal = styled.div`
   display: inline-flex;
@@ -36,78 +35,59 @@ export const GoalChip = styled.span`
   letter-spacing: 0.06em;
 `
 
-export const ToggleRow = styled.div`
+export const TipCard = styled.div`
+  min-height: 220px;
+  padding: 26px 24px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(97, 218, 251, 0.08), rgba(192, 132, 252, 0.08));
+  border: 1px solid rgba(97, 218, 251, 0.25);
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
 `
 
-export const Switch = styled.label`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  color: var(--text);
+export const TipLabel = styled.span`
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+`
 
-  input {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--accent);
+export const TipQuote = styled(motion.blockquote)`
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--text);
+  font-weight: 500;
+`
+
+export const SpinnerWrap = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+`
+
+export const Spinner = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(97, 218, 251, 0.2);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 `
 
-export const Log = styled.div`
-  flex: 1;
-  min-height: 220px;
-  max-height: 260px;
-  overflow-y: auto;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--border);
-  padding: 10px;
+export const ButtonRow = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-family: var(--mono);
-  font-size: 12.5px;
-`
-
-const kindStyles: Record<LogKind, ReturnType<typeof css>> = {
-  sub: css`
-    border-color: rgba(97, 218, 251, 0.3);
-    color: var(--accent);
-  `,
-  tick: css`
-    border-color: rgba(192, 132, 252, 0.25);
-    color: #d0b0ff;
-  `,
-  clean: css`
-    border-color: rgba(124, 249, 194, 0.35);
-    color: var(--accent-3);
-  `,
-  warn: css`
-    border-color: rgba(255, 107, 122, 0.45);
-    color: var(--danger);
-    background: rgba(255, 107, 122, 0.06);
-  `,
-}
-
-export const LogLine = styled(motion.div)<{ $kind: LogKind }>`
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  ${({ $kind }) => kindStyles[$kind]}
-`
-
-export const LogTag = styled.span`
-  text-transform: uppercase;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
 `
